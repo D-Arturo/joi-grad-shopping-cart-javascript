@@ -1,6 +1,24 @@
 import Customer from "../../src/model/Customer.js";
 import Product from "../../src/model/Product.js";
 import ShoppingCart from "../../src/model/ShoppingCart.js";
+import ShoppingCartConsolidation from "../../src/services/ShoppingCartConsolidation";
+import Order from "../../src/model/Order";
+
+describe('Given the shopping cart', () => {
+    it("when normal product is bought, then no discount must be applied", () => {
+        const customer = new Customer("Test customer");
+        const products = [
+            new Product(100, "TestProductOne", "Test Product One"),
+            new Product(200, "TestProductTwo", "Test Product Two")
+        ];
+        const shoppingCart = new ShoppingCart(customer, products);
+
+        const order = ShoppingCartConsolidation.checkout(shoppingCart);
+
+        expect(order.totalPrice).toBe(300);
+        expect(order).toBeInstanceOf(Order);
+    });
+});
 
 describe("Shopping cart should checkout", () => {
 
@@ -8,8 +26,10 @@ describe("Shopping cart should checkout", () => {
         const customer = new Customer("Test customer");
         const products = [new Product(100, "DIS_10_TestProduct", "Test product")];
         const shoppingCart = new ShoppingCart(customer, products);
-        
-        const order = shoppingCart.checkout();
+
+        const shoppingCartConsolidation = new ShoppingCartConsolidation(shoppingCart);
+
+        const order = shoppingCartConsolidation.checkout();
 
         expect(order.totalPrice).toBe(90);
         expect(order.loyaltyPoints).toBe(10);
@@ -20,7 +40,9 @@ describe("Shopping cart should checkout", () => {
         const products = [new Product(150, "DIS_15_TestProduct", "Test product")];
         const shoppingCart = new ShoppingCart(customer, products);
 
-        const order = shoppingCart.checkout();
+        const shoppingCartConsolidation = new ShoppingCartConsolidation(shoppingCart);
+
+        const order = shoppingCartConsolidation.checkout();
 
         expect(order.totalPrice).toBe(127.5);
         expect(order.loyaltyPoints).toBe(10);
@@ -31,7 +53,9 @@ describe("Shopping cart should checkout", () => {
         const products = [new Product(100, "TestProduct", "Test product")];
         const shoppingCart = new ShoppingCart(customer, products);
 
-        const order = shoppingCart.checkout();
+        const shoppingCartConsolidation = new ShoppingCartConsolidation(shoppingCart);
+
+        const order = shoppingCartConsolidation.checkout();
 
         expect(order.totalPrice).toBe(100);
         expect(order.loyaltyPoints).toBe(20);
